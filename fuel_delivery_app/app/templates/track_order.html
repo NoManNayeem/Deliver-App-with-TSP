@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Track Your Orders{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Track Your Orders</h1>
+
+    <!-- Check if there are any orders -->
+    {% if orders %}
+    <!-- Orders Tracking Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Address</th>
+                    <th>Fuel Quantity</th>
+                    <th>Delivery Window</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.fuel_quantity }} L</td>
+                    <td>{{ order.time_window_start.strftime('%Y-%m-%d %H:%M') }} - {{ order.time_window_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <span class="badge {% if order.status == 'delivered' %} bg-success {% elif order.status == 'pending' %} bg-warning {% else %} bg-info {% endif %}">
+                            <i class="fas {% if order.status == 'delivered' %} fa-check-circle {% elif order.status == 'pending' %} fa-exclamation-circle {% else %} fa-truck {% endif %}"></i>
+                            {{ order.status | capitalize }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional: Add Pagination Here If Needed -->
+    
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle"></i> No orders to display. Once you place an order, you can track it here.
+    </div>
+    <a href="/place-order" class="btn btn-primary"><i class="fas fa-gas-pump"></i> Place an Order</a>
+    {% endif %}
+</div>
+{% endblock %}

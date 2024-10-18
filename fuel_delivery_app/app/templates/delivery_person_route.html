@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Assigned Orders and Optimized Route{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Assigned Orders and Optimized Route</h1>
+    <h2 class="mb-4">Delivery Person: {{ delivery_person.name }}</h2>
+
+    <!-- Orders Table -->
+    <div class="table-responsive mt-3">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Address</th>
+                    <th>Fuel Quantity</th>
+                    <th>Delivery Window</th>
+                    <th>Estimated Delivery Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order, time in optimized_orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.fuel_quantity }} L</td>
+                    <td>{{ order.time_window_start.strftime('%Y-%m-%d %H:%M') }} - {{ order.time_window_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>
+                        <span class="badge bg-info">{{ time }} minutes</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Total Estimated Time -->
+    <div class="alert alert-primary mt-4" role="alert">
+        <i class="fas fa-clock"></i> <strong>Total Estimated Delivery Time:</strong> {{ total_time }} minutes
+    </div>
+
+    <!-- Delivery Route Progress Section -->
+    <h3 class="mt-5">Delivery Route Progress</h3>
+    <div class="progress">
+        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ progress_percentage|round(2) }}%" aria-valuenow="{{ total_time_completed }}" aria-valuemin="0" aria-valuemax="{{ total_time }}"></div>
+    </div>
+    <p class="text-muted mt-2">This progress bar indicates the estimated completion of the delivery route based on the orders.</p>
+</div>
+{% endblock %}

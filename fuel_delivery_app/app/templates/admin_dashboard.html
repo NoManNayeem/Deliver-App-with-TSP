@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <!-- Orders Tracking and Assignment -->
+    <h2 class="mt-4">Order Tracking</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Address</th>
+                    <th>Fuel Quantity</th>
+                    <th>Delivery Window</th>
+                    <th>Status</th>
+                    <th>Assigned Delivery Person</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if orders %}
+                    {% for order in orders %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer.username }}</td>
+                        <td>{{ order.address }}</td>
+                        <td>{{ order.fuel_quantity }} L</td>
+                        <td>{{ order.time_window_start.strftime('%Y-%m-%d %H:%M') }} - {{ order.time_window_end.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            <span class="badge {% if order.status == 'pending' %} bg-warning {% elif order.status == 'assigned' %} bg-info {% else %} bg-success {% endif %}">
+                                {{ order.status | capitalize }}
+                            </span>
+                        </td>
+                        <td>{{ order.delivery_person.name if order.delivery_person else 'Unassigned' }}</td>
+                        <td>
+                            {% if order.status == 'pending' %}
+                            <form method="POST" action="/assign-order/{{ order.id }}">
+                                <select name="delivery_person_id" class="form-select" data-bs-toggle="tooltip" data-bs-placement="top" title="Assign a delivery person" {% if not delivery_people %} disabled {% endif %}>
+                                    {% if delivery_people %}
+                                        {% for person in delivery_people %}
+                                        <option value="{{ person.id }}">{{ person.name }} (Capacity: {{ person.vehicle_capacity }} L)</option>
+                                        {% endfor %}
+                                    {% else %}
+                                        <option>No available delivery personnel</option>
+                                    {% endif %}
+                                </select>
+                                <button type="submit" class="btn btn-success mt-2" {% if not delivery_people %} disabled {% endif %}>Assign</button>
+                            </form>
+                            {% else %}
+                            <span class="text-muted">Assigned to {{ order.delivery_person.name }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center">No orders available at the moment.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Delivery Personnel Tracking -->
+    <h2 class="mt-4">Delivery Personnel Tracking</h2>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Delivery Person</th>
+                    <th>Vehicle Capacity</th>
+                    <th>Assigned Orders</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if delivery_people %}
+                    {% for person in delivery_people %}
+                    <tr>
+                        <td>{{ person.name }}</td>
+                        <td>{{ person.vehicle_capacity }} L</td>
+                        <td>
+                            <ul>
+                                {% for order in person.orders %}
+                                <li>Order {{ order.id }} - 
+                                    <span class="badge {% if order.status == 'pending' %} bg-warning {% elif order.status == 'assigned' %} bg-info {% else %} bg-success {% endif %}">
+                                        {{ order.status | capitalize }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">No delivery personnel available at the moment.</td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Fuel Overview -->
+    <h2 class="mt-4">Fuel Overview</h2>
+    <div class="card mt-3">
+        <div class="card-body">
+            <p><strong>Total Fuel Assigned:</strong> {{ total_assigned_fuel }} L</p>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-info" role="progressbar" style="width: {{ (total_assigned_fuel / 5000) * 100 }}%;" aria-valuenow="{{ total_assigned_fuel }}" aria-valuemin="0" aria-valuemax="5000">
+                    {{ total_assigned_fuel }} L
+                </div>
+            </div>
+
+            <p><strong>Extra Fuel Available:</strong> {{ extra_fuel }} L</p>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ (extra_fuel / 5000) * 100 }}%;" aria-valuenow="{{ extra_fuel }}" aria-valuemin="0" aria-valuemax="5000">
+                    {{ extra_fuel }} L
+                </div>
+            </div>
+
+            <p><strong>Fuel Needed for Pending Orders:</strong> {{ fuel_needed }} L</p>
+            <div class="progress mb-2">
+                <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (fuel_needed / 5000) * 100 }}%;" aria-valuenow="{{ fuel_needed }}" aria-valuemin="0" aria-valuemax="5000">
+                    {{ fuel_needed }} L
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+
+{% endblock %}

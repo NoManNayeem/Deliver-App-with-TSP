@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Fuel Delivery Service{% endblock %}
+
+{% block content %}
+<div class="hero-section text-center py-5" style="background-image: url('https://images.unsplash.com/photo-1580287192846-ebb89d7e348e?q=80&w=1162&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); background-size: cover; background-position: center; color: white;">
+    <div class="container ">
+        <h1 class="display-4 fw-bold">Welcome to Fuel Delivery Service!</h1>
+        <p class="lead">Fast, reliable fuel delivery at your doorstep. Track your orders, manage deliveries, and get optimized routes all on one platform.</p>
+        <hr class="my-4 bg-light">
+        <p>Whether you're a customer or a delivery person, we’ve got you covered!</p>
+
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mt-4">
+            <a class="btn btn-primary btn-lg" href="/place-order" role="button">
+                <i class="fas fa-truck"></i> Place an Order
+            </a>
+            <a class="btn btn-secondary btn-lg" href="/admin" role="button">
+                <i class="fas fa-user-shield"></i> Admin Dashboard
+            </a>
+            <a class="btn btn-success btn-lg" href="/delivery-person/1" role="button">
+                <i class="fas fa-map-marked-alt"></i> Delivery Dashboard
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Additional information section -->
+<section class="info-section py-5">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-4">
+                <i class="fas fa-gas-pump fa-3x mb-3 text-primary"></i>
+                <h4>Easy Ordering</h4>
+                <p>Seamlessly place fuel orders from the comfort of your home with just a few clicks.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-clock fa-3x mb-3 text-primary"></i>
+                <h4>Fast Delivery</h4>
+                <p>Our delivery personnel ensure timely and safe fuel deliveries to your location.</p>
+            </div>
+            <div class="col-md-4">
+                <i class="fas fa-route fa-3x mb-3 text-primary"></i>
+                <h4>Optimized Routes</h4>
+                <p>Get accurate delivery estimates with our optimized delivery route system.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
